@@ -1,4 +1,3 @@
-using EdgeService.gRPC;
 using EdgeServices.gRPC;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
