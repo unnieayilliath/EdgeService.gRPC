@@ -1,13 +1,14 @@
 using EdgeService.gRPC;
 using EdgeServices.gRPC;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
 namespace EdgeService.gRPC.Services
 {
     public class IoTMessageService : IoTMessage.IoTMessageBase
     {
-        private readonly ILogger<GreeterService> _logger;
-        public IoTMessageService(ILogger<GreeterService> logger)
+        private readonly ILogger<IoTMessageService> _logger;
+        public IoTMessageService(ILogger<IoTMessageService> logger)
         {
             _logger = logger;
         }
@@ -16,7 +17,7 @@ namespace EdgeService.gRPC.Services
         {
             return Task.FromResult(new EdgeResponse
             {
-                Message = "Hello " + request.Data
+                ReceivedTime = DateTime.UtcNow.ToTimestamp()
             });
         }
     }
