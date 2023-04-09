@@ -18,7 +18,11 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.22.0-rc2" />
+    <PackageReference Include="Google.Protobuf" Version="3.22.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EdgeService.gRPC.CloudConnector\EdgeService.gRPC.CloudConnector.csproj" />
   </ItemGroup>
 
 </Project>
