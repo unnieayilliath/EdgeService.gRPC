@@ -5,17 +5,17 @@ using Grpc.Core;
 
 namespace EdgeService.gRPC.Services
 {
-    public class IoTMessageService : IoTMessage.IoTMessageBase
+    public class EdgeGatewayService : EdgeGateway.EdgeGatewayBase
     {
-        private readonly ILogger<IoTMessageService> _logger;
+        private readonly ILogger<EdgeGatewayService> _logger;
         private CloudConnector.CloudConnector _cloudConnector;
-        public IoTMessageService(ILogger<IoTMessageService> logger)
+        public EdgeGatewayService(ILogger<EdgeGatewayService> logger)
         {
             _logger = logger;
             _cloudConnector= new CloudConnector.CloudConnector();
         }
 
-        public override async Task<EdgeResponse> Send(EdgeRequest request, ServerCallContext context)
+        public override async Task<EdgeResponse> Send(IoTMessage request, ServerCallContext context)
         {
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
             var cloudRequest = new CloudRequest { Data = request.Data, SendTime = request.SendTime,EdgeReceivedTime= receivedTime };
