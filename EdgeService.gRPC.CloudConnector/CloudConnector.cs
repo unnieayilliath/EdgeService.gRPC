@@ -5,7 +5,7 @@ namespace EdgeService.gRPC.CloudConnector
 {
     public class CloudConnector
     {
-        private EdgeMessage.EdgeMessageClient _edgeMessageClient;
+        private CloudBroker.CloudBrokerClient _cloudBrokerClient;
         public CloudConnector()
         {
             // create a httpHandler
@@ -16,14 +16,14 @@ namespace EdgeService.gRPC.CloudConnector
             var httpClient = new HttpClient(httpHandler);
             // The port number must match the port of the gRPC server.
             var channel = GrpcChannel.ForAddress("https://localhost:5003", new GrpcChannelOptions { HttpClient = httpClient });
-            _edgeMessageClient = new EdgeMessage.EdgeMessageClient(channel);
+            _cloudBrokerClient = new CloudBroker.CloudBrokerClient(channel);
         }
 
         public async Task SendToCloudAsync(CloudRequest request)
         {
             try
             {
-                var reply = await _edgeMessageClient.SendAsync(request);
+                var reply = await _cloudBrokerClient.SendAsync(request);
                 TimeSpan ts = reply.ReceivedTime.ToDateTime() - request.SendTime.ToDateTime();
             }
             catch (Exception ex)

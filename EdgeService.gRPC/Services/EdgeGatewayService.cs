@@ -15,7 +15,7 @@ namespace EdgeService.gRPC.Services
             _cloudConnector= new CloudConnector.CloudConnector();
         }
 
-        public override async Task<EdgeResponse> Send(IoTMessage request, ServerCallContext context)
+        public override async Task<EdgeResponse> Send(EdgeRequest request, ServerCallContext context)
         {
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
             var cloudRequest = new CloudRequest { Data = request.Data, SendTime = request.SendTime,EdgeReceivedTime= receivedTime };

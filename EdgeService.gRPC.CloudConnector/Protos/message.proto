@@ -5,8 +5,11 @@ import "google/protobuf/timestamp.proto";
 
 package message;
 
-service EdgeMessage {
+service CloudBroker {
+	//unary
   rpc Send (CloudRequest) returns (CloudResponse);
+  // Client streaming
+  rpc SendStream (stream CloudRequest) returns (CloudResponse);
 }
 
 message CloudRequest {
