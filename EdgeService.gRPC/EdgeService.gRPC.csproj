@@ -9,7 +9,6 @@
 
 	<ItemGroup>
 		<Protobuf Include="..\..\CommonModule.Protos\edge.proto" GrpcServices="Server" />
-		<Protobuf Include="..\..\CommonModule.Protos\cloud.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 	<ItemGroup>

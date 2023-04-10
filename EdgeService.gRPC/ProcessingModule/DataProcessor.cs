@@ -11,14 +11,22 @@ namespace EdgeService.ProcessingModule
     public class DataProcessor
     {
         private CloudConnector _cloudConnector;
+        private DataEnrichment _dataEnrichment;
+        private DataAggregator _dataAggregator;
         public DataProcessor()
         {
             _cloudConnector = new CloudConnector();
+            _dataEnrichment = new DataEnrichment();
+            _dataAggregator = new DataAggregator();
         }
 
         public void Run(EquipmentMessage message)
         {
-
+            // enrichment module
+            var enrichedMessage = _dataEnrichment.Run(message);
+            // aggregate module
+            _dataAggregator.Add(enrichedMessage);
+            _cloudConnector.SendToCloudAsync(enrichedMessage);
         }
     }
 }
