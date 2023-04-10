@@ -1,5 +1,5 @@
 ﻿using EdgeService.gRPC.CloudConnector;
-using EdgeServices.gRPC;
+using CommonModule.Protos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

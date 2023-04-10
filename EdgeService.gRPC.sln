@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdgeService.gRPC", "EdgeSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdgeService.gRPC.CloudConnector", "EdgeService.gRPC.CloudConnector\EdgeService.gRPC.CloudConnector.csproj", "{CFEBE8F7-DA84-48DF-8C28-7BBF25E38D69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdgeService.Protos", "EdgeService.Protos\EdgeService.Protos.csproj", "{98F9A650-96D2-4D28-A044-A2D26974211B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{CFEBE8F7-DA84-48DF-8C28-7BBF25E38D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFEBE8F7-DA84-48DF-8C28-7BBF25E38D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFEBE8F7-DA84-48DF-8C28-7BBF25E38D69}.Release|Any CPU.Build.0 = Release|Any CPU
-		{98F9A650-96D2-4D28-A044-A2D26974211B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98F9A650-96D2-4D28-A044-A2D26974211B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98F9A650-96D2-4D28-A044-A2D26974211B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98F9A650-96D2-4D28-A044-A2D26974211B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

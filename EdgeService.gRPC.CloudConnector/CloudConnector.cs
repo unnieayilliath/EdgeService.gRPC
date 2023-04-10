@@ -1,4 +1,5 @@
-﻿using Google.Protobuf;
+﻿using CommonModule.Protos;
+using Google.Protobuf;
 using Grpc.Net.Client;
 
 namespace EdgeService.gRPC.CloudConnector

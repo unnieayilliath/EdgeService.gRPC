@@ -16,9 +16,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Protos\" />
-		<Protobuf Include="..\EdgeService.Protos\cloud.proto" GrpcServices="Client" />
-		<Protobuf Include="..\EdgeService.Protos\edge.proto" GrpcServices="Client" />
+		<Protobuf Include="..\..\CommonModule.Protos\cloud.proto" GrpcServices="Client" />
+		<Protobuf Include="..\..\CommonModule.Protos\edge.proto" GrpcServices="Client" />
 	</ItemGroup>
 
 </Project>
