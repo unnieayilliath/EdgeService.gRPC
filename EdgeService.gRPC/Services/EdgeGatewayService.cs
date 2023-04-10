@@ -8,18 +8,21 @@ namespace EdgeService.gRPC.Services
     public class EdgeGatewayService : EdgeGateway.EdgeGatewayBase
     {
         private readonly ILogger<EdgeGatewayService> _logger;
-        private CloudConnector.CloudConnector _cloudConnector;
         public EdgeGatewayService(ILogger<EdgeGatewayService> logger)
         {
             _logger = logger;
-            _cloudConnector= new CloudConnector.CloudConnector();
         }
-
-        public override async Task<EdgeResponse> Send(EdgeRequest request, ServerCallContext context)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<EdgeResponse> Send(EquipmentMessage request, ServerCallContext context)
         {
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
-            var cloudRequest = new CloudRequest { Data = request.Data, SendTime = request.SendTime,EdgeReceivedTime= receivedTime };
-            await _cloudConnector.SendToCloudAsync(cloudRequest);
+            //var cloudRequest = new EquipmentEnrichedMessage { Data = request.Payload, SendTime = request.Timestamp,EdgeReceivedTime= receivedTime };
+            //await _cloudConnector.SendToCloudAsync(cloudRequest);
             return new EdgeResponse
             {
                 ReceivedTime = receivedTime

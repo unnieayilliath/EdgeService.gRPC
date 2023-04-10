@@ -19,12 +19,12 @@ namespace EdgeService.gRPC.CloudConnector
             _cloudBrokerClient = new CloudBroker.CloudBrokerClient(channel);
         }
 
-        public async Task SendToCloudAsync(CloudRequest request)
+        public async Task SendToCloudAsync(EquipmentEnrichedMessage request)
         {
             try
             {
                 var reply = await _cloudBrokerClient.SendAsync(request);
-                TimeSpan ts = reply.ReceivedTime.ToDateTime() - request.SendTime.ToDateTime();
+                //TimeSpan ts = reply.ReceivedTime.ToDateTime() - request.SendTime.ToDateTime();
             }
             catch (Exception ex)
             {
