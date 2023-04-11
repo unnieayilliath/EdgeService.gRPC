@@ -6,10 +6,13 @@ using EdgeService.ProcessingModule;
 
 namespace EdgeService.gRPC.Services
 {
+#pragma warning disable CS0436 // Type conflicts with imported type
     public class EdgeGatewayService : EdgeGateway.EdgeGatewayBase
+#pragma warning restore CS0436 // Type conflicts with imported type
     {
         private readonly ILogger<EdgeGatewayService> _logger;
         private readonly DataProcessor _dataProcessor;
+        private readonly DataAggregator _dataAggregator;
         public EdgeGatewayService(ILogger<EdgeGatewayService> logger)
         {
             _logger = logger;
@@ -21,10 +24,27 @@ namespace EdgeService.gRPC.Services
         /// <param name="request"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public override async Task<EdgeResponse> Send(EquipmentMessage request, ServerCallContext context)
+        public override async Task<EdgeResponse> SendEquipment(EquipmentMessage request, ServerCallContext context)
         {
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
             _dataProcessor.Run(request);
+            return new EdgeResponse
+            {
+                ReceivedTime = receivedTime
+            };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<EdgeResponse> SendFacility(FacilityMessage request, ServerCallContext context)
+        {
+            Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
+            _dataAggregator.PushToFacilityList(request);
+          //  _dataProcessor.Run(request);
             return new EdgeResponse
             {
                 ReceivedTime = receivedTime

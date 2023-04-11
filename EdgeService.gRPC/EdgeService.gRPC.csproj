@@ -8,6 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Protobuf Include="..\..\CommonModule.Protos\edge.proto" GrpcServices="Server" />
 	</ItemGroup>
 

@@ -25,7 +25,7 @@ namespace EdgeService.ProcessingModule
             // enrichment module
             var enrichedMessage = _dataEnrichment.Run(message);
             // aggregate module
-            _dataAggregator.Add(enrichedMessage);
+            _dataAggregator.Run(enrichedMessage);
             _cloudConnector.SendToCloudAsync(enrichedMessage);
         }
     }
