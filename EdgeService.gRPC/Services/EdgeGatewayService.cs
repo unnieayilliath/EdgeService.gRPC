@@ -3,6 +3,7 @@ using CommonModule.Protos;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using EdgeService.ProcessingModule;
+using Microsoft.Extensions.Logging;
 
 namespace EdgeService.gRPC.Services
 {
@@ -17,6 +18,7 @@ namespace EdgeService.gRPC.Services
         {
             _logger = logger;
             _dataProcessor = new DataProcessor();
+            _dataAggregator = new DataAggregator();
         }
         /// <summary>
         /// 
@@ -26,6 +28,7 @@ namespace EdgeService.gRPC.Services
         /// <returns></returns>
         public override async Task<EdgeResponse> SendEquipment(EquipmentMessage request, ServerCallContext context)
         {
+            _logger.LogInformation("Received equipment request!");
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
             _dataProcessor.Run(request);
             return new EdgeResponse
@@ -43,8 +46,8 @@ namespace EdgeService.gRPC.Services
         public override async Task<EdgeResponse> SendFacility(FacilityMessage request, ServerCallContext context)
         {
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
+            _logger.LogInformation("Received facility request!");
             _dataAggregator.PushToFacilityList(request);
-          //  _dataProcessor.Run(request);
             return new EdgeResponse
             {
                 ReceivedTime = receivedTime
