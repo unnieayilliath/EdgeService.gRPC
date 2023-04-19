@@ -1,4 +1,6 @@
 ﻿using CommonModule.Protos;
+using EdgeService.gRPC.ERP;
+
 namespace EdgeService.ProcessingModule
 {
     public class DataEnrichment
@@ -8,7 +10,7 @@ namespace EdgeService.ProcessingModule
 
         }
         /// <summary>
-        /// 
+        /// This method enriches the message with data from the location ERP systems.
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -23,9 +25,33 @@ namespace EdgeService.ProcessingModule
                 Temperature= message.Temperature,
                 Timestamp= message.Timestamp
             };
-            enrichedData.FactoryId = "Factory123";
-            enrichedData.Dutymanager = "Unnie Ayilliath";
+            var locationData= GetCurrentLocationData(message.Timestamp.ToDateTime());
+            enrichedData.FactoryId = locationData!=null?locationData.factoryId:"Not found";
+            enrichedData.Dutymanager = locationData != null ? locationData.DutyManager : "Not found";
             return enrichedData;
+        }
+        /// <summary>
+        /// This method gets the current location data for the specified time
+        /// </summary>
+        /// <param name="readingTime"></param>
+        /// <returns></returns>
+        public LocationData GetCurrentLocationData(DateTime readingTime)
+        {
+            using (var context = new ERPDbContext())
+            {
+                var currentDutyManager = context.LocationDatas
+                    .Where(d => d.DutyStartTime <= readingTime && d.DutyEndTime > readingTime)
+                    .FirstOrDefault();
+
+                if (currentDutyManager != null)
+                {
+                    return currentDutyManager;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
     }
 }

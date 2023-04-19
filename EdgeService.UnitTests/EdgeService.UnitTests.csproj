@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EdgeService.gRPC.CloudConnector\EdgeService.gRPC.CloudConnector.csproj" />
+    <ProjectReference Include="..\EdgeService.gRPC\EdgeService.gRPC.csproj" />
   </ItemGroup>
 
 </Project>
