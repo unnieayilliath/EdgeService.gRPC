@@ -25,6 +25,7 @@ namespace EdgeService.ProcessingModule
                 Temperature= message.Temperature,
                 Timestamp= message.Timestamp
             };
+            // get the location data from local erp database
             var locationData= GetCurrentLocationData(message.Timestamp.ToDateTime());
             enrichedData.FactoryId = locationData!=null?locationData.factoryId:"Not found";
             enrichedData.Dutymanager = locationData != null ? locationData.DutyManager : "Not found";
