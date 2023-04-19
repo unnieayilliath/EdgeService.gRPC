@@ -36,6 +36,26 @@ namespace EdgeService.gRPC.Services
                 ReceivedTime = receivedTime
             };
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="requestStream"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task<EdgeResponse> SendEquipmentStream(IAsyncStreamReader<EquipmentMessage> requestStream, ServerCallContext context)
+        {
+            while (await requestStream.MoveNext())
+            {
+                var currentMessage = requestStream.Current;
+                // Process the current message.
+                _dataProcessor.Run(currentMessage);
+            }
+            Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
+            return new EdgeResponse
+            {
+                ReceivedTime = receivedTime
+            };
+        }
 
         /// <summary>
         /// 

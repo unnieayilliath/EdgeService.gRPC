@@ -26,7 +26,6 @@ namespace EdgeService.gRPC.CloudConnector
             {
                 var reply = await _cloudBrokerClient.SendAsync(request);
                 return reply;
-                //TimeSpan ts = reply.ReceivedTime.ToDateTime() - request.SendTime.ToDateTime();
             }
             catch (Exception ex)
             {
