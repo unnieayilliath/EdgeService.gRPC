@@ -5,10 +5,11 @@ namespace EdgeService.ProcessingModule
 {
     public class DataEnrichment
     {
-        private readonly ERPDbContext _erpDbContext;
+        private static ERPDbContext _erpDbContext;
         public DataEnrichment()
         {
-            _erpDbContext=new ERPDbContext();
+            if (_erpDbContext == null)
+                _erpDbContext = new ERPDbContext();
         }
         /// <summary>
         /// This method enriches the message with data from the location ERP systems.

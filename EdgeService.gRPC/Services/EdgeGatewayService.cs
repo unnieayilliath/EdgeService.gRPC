@@ -56,6 +56,29 @@ namespace EdgeService.gRPC.Services
                 ReceivedTime = receivedTime
             };
         }
+        /// <summary>
+        /// Bi-directional streaming implementation
+        /// </summary>
+        /// <param name="requestStream"></param>
+        /// <param name="responseStream"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override async Task SendEquipmentBiDirectionalStream(IAsyncStreamReader<EquipmentMessage> requestStream, IServerStreamWriter<EdgeResponse> responseStream, ServerCallContext context)
+        {
+
+            await foreach (var requestMessage in requestStream.ReadAllAsync(context.CancellationToken))
+            {
+                // Process the current message.
+                _dataProcessor.Run(requestMessage);
+                Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
+                var response = new EdgeResponse
+                {
+                    MessageId = requestMessage.MessageId,
+                    ReceivedTime = receivedTime
+                };
+                await responseStream.WriteAsync(response);
+            }
+        }
 
         /// <summary>
         /// 
