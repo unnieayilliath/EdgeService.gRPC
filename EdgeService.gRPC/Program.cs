@@ -1,6 +1,5 @@
-using EdgeService.gRPC.CloudConnector;
 using EdgeService.gRPC.Services;
-using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +11,14 @@ builder.WebHost.ConfigureKestrel((context, options) =>
         listenOptions.UseHttps();
     });
 });
+builder.Services.AddAuthentication(
+        CertificateAuthenticationDefaults.AuthenticationScheme)
+    .AddCertificate()
+    .AddCertificateCache(options =>
+    {
+        options.CacheSize = 1024;
+        options.CacheEntryExpiration = TimeSpan.FromMinutes(30); //cache for 30 minutes
+    });
 // Add services to the container.
 builder.Services.AddGrpc();
 

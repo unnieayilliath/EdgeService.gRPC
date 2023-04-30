@@ -20,7 +20,7 @@ namespace EdgeService.ProcessingModule
             _dataAggregator = new DataAggregator();
         }
 
-        public void Run(EquipmentMessage message)
+        public async Task Run(EquipmentMessage message)
         {
             // enrichment module
             var enrichedMessage = _dataEnrichment.Run(message);

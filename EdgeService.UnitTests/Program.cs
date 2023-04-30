@@ -1,12 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using CommonModule.Protos;
 using EdgeService.gRPC.CloudConnector;
+using EdgeService.gRPC.ERP;
 using EdgeService.ProcessingModule;
 using Google.Protobuf.WellKnownTypes;
 
 
-var _dataEnrichment = new DataEnrichment();
-_dataEnrichment.GetCurrentLocationData(DateTime.Now.AddDays(1));
+var _dbContext = new ERPDbContext();
+_dbContext.GetCurrentLocationData(DateTime.Now.AddDays(1));
 //var _cloudConnector= new CloudConnector();
 //var enrichedData = new EquipmentEnrichedMessage
 //{

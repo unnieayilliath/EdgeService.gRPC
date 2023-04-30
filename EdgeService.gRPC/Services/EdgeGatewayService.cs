@@ -30,7 +30,7 @@ namespace EdgeService.gRPC.Services
         {
             _logger.LogInformation("Received equipment request!");
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
-            _dataProcessor.Run(request);
+            await _dataProcessor.Run(request);
             return new EdgeResponse
             {
                 ReceivedTime = receivedTime

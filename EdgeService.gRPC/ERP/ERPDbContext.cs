@@ -1,23 +1,54 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace EdgeService.gRPC.ERP
 {
-    public class ERPDbContext: DbContext
+    public class ERPDbContext : IDisposable
     {
-        public DbSet<LocationData> LocationDatas { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        private SqlConnection _connection;
+        public ERPDbContext()
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=ERP;Trusted_Connection=True;");
+            _connection = new SqlConnection(@"Server=(localdb)\MSSQLLocalDB;Database=ERP;Trusted_Connection=True;");
+            _connection.Open();
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public LocationData GetCurrentLocationData(DateTime readingTime)
         {
-            modelBuilder.Entity<LocationData>(entity =>
+
+            using(var cmd= new SqlCommand())
             {
-                entity.ToTable("LocationData");
-                entity.HasNoKey();
-                // Other configurations
-            });
+                try
+                {
+                    var dateTimeParam = new SqlParameter("@DateTimeParam", SqlDbType.DateTime);
+                    dateTimeParam.Value = readingTime;
+                    cmd.Parameters.Add(dateTimeParam);
+                    LocationData locationData = null;
+                    cmd.Connection = _connection;
+                    cmd.CommandType = System.Data.CommandType.Text;
+                    cmd.CommandText = $@"SELECT TOP(1) [factoryId],[DutyManager] FROM [erp].[dbo].[LocationData] where DutyStartTime<=@DateTimeParam and DutyEndTime>=@DateTimeParam";
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        locationData= new LocationData()
+                        {
+                            factoryId = dataReader.GetFieldValue<string>(0),
+                            DutyManager = dataReader.GetFieldValue<string>(1)
+                        };
+                        break;
+                    }
+                    return locationData;
+                }
+                catch(Exception ex)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            _connection.Close();
+            _connection.Dispose();
         }
     }
 }
