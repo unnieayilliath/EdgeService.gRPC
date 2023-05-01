@@ -1,12 +1,18 @@
 ﻿using CommonModule.Protos;
 using Google.Protobuf;
+using Grpc.Core;
 using Grpc.Net.Client;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EdgeService.gRPC.CloudConnector
 {
-    public class CloudConnector
+    public class CloudConnector : IAsyncDisposable
     {
         private CloudBroker.CloudBrokerClient _cloudBrokerClient;
+        private Grpc.Core.AsyncClientStreamingCall<EquipmentEnrichedMessage, CloudResponse> _clientStreamingCall;
+        private Grpc.Core.AsyncDuplexStreamingCall<EquipmentEnrichedMessage, CloudResponse> _biStreamingCall;
+        private Task _readResponsesTask;
+        private string _streamingMode;
         public CloudConnector()
         {
             // create a httpHandler
@@ -18,9 +24,18 @@ namespace EdgeService.gRPC.CloudConnector
             // The port number must match the port of the gRPC server.
             var channel = GrpcChannel.ForAddress("https://localhost:5003", new GrpcChannelOptions { HttpClient = httpClient });
             _cloudBrokerClient = new CloudBroker.CloudBrokerClient(channel);
+            _streamingMode = StreamingMode.Unary;
+            if (_streamingMode == StreamingMode.ClientStreaming)
+            {
+                Create_ClientStreamingCall();
+            }
+            else if (_streamingMode == StreamingMode.BiDirectional)
+            {
+                Create_BiStreamingCall();
+            }
         }
 
-        public async Task<CloudResponse> SendToCloudAsync(EquipmentEnrichedMessage request)
+        public async Task<CloudResponse> SendToCloud_UnaryAsync(EquipmentEnrichedMessage request)
         {
             try
             {
@@ -31,6 +46,110 @@ namespace EdgeService.gRPC.CloudConnector
             {
                 var message = ex.Message;
                 throw ex;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task SendToCloud_ClientStreamAsync(EquipmentEnrichedMessage request)
+        {
+            try
+            {
+                await _clientStreamingCall.RequestStream.WriteAsync(request);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task SendToCloud_BiStreamAsync(EquipmentEnrichedMessage request)
+        {
+            try
+            {
+                await _cloudBrokerClient.SendAsync(request);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// This method creates a client streaming call
+        /// </summary>
+        public void Create_ClientStreamingCall()
+        {
+            _clientStreamingCall = _cloudBrokerClient.SendStream();
+        }
+        /// <summary>
+        /// This method marks the client streaming call as completed.
+        /// </summary>
+        public async Task Complete_ClientStreamingCallAsync()
+        {
+            await _clientStreamingCall.RequestStream.CompleteAsync();
+            var response = await _clientStreamingCall.ResponseAsync;
+        }
+
+        /// <summary>
+        /// This method creates a client streaming call
+        /// </summary>
+        public void Create_BiStreamingCall()
+        {
+            _biStreamingCall = _cloudBrokerClient.SendBiDirectionalStream();
+            // register all response calls 
+            _readResponsesTask = Task.Run(async () =>
+            {
+                await foreach (var responseMessage in _biStreamingCall.ResponseStream.ReadAllAsync())
+                {
+                    //get the response for the message
+                    //logs.Add($",,,ReceivedTime={DateTime.UtcNow},messageId={responseMessage.MessageId}");
+                }
+            });
+        }
+        /// <summary>
+        /// This method marks the client streaming call as completed.
+        /// </summary>
+        public async Task Complete_BiStreamingCallAsync()
+        {
+            await _biStreamingCall.RequestStream.CompleteAsync();
+            await _readResponsesTask;
+        }
+
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_streamingMode == StreamingMode.ClientStreaming)
+            {
+                await Complete_ClientStreamingCallAsync();
+            }
+            else if (_streamingMode == StreamingMode.BiDirectional)
+            {
+                await Complete_BiStreamingCallAsync();
+            }
+        }
+
+        public void SendToCloudAsync(EquipmentEnrichedMessage enrichedMessage)
+        {
+            if (_streamingMode == StreamingMode.ClientStreaming)
+            {
+                SendToCloud_ClientStreamAsync(enrichedMessage);
+            }
+            else if (_streamingMode == StreamingMode.BiDirectional)
+            {
+                SendToCloud_BiStreamAsync(enrichedMessage);
+            }
+            else
+            {
+                SendToCloud_UnaryAsync(enrichedMessage);
             }
         }
     }

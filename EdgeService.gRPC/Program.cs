@@ -19,9 +19,9 @@ builder.Services.AddAuthentication(
         options.CacheSize = 1024;
         options.CacheEntryExpiration = TimeSpan.FromMinutes(30); //cache for 30 minutes
     });
+builder.Services.AddSingleton<EdgeGatewayService>();
 // Add services to the container.
 builder.Services.AddGrpc();
-
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.MapGrpcService<EdgeGatewayService>();

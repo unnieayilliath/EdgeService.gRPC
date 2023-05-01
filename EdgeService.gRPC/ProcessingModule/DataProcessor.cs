@@ -8,16 +8,21 @@ using System.Threading.Tasks;
 
 namespace EdgeService.ProcessingModule
 {
-    public class DataProcessor
+    public class DataProcessor:IDisposable
     {
-        private CloudConnector _cloudConnector;
-        private DataEnrichment _dataEnrichment;
-        private DataAggregator _dataAggregator;
+        private readonly CloudConnector _cloudConnector;
+        private readonly DataEnrichment _dataEnrichment;
+        private readonly DataAggregator _dataAggregator;
         public DataProcessor()
         {
             _cloudConnector = new CloudConnector();
             _dataEnrichment = new DataEnrichment();
             _dataAggregator = new DataAggregator();
+        }
+
+        public void Dispose()
+        {
+            _cloudConnector.DisposeAsync();
         }
 
         public async Task Run(EquipmentMessage message)

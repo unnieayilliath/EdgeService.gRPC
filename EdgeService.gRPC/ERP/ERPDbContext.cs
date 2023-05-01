@@ -25,7 +25,7 @@ namespace EdgeService.gRPC.ERP
                     LocationData locationData = null;
                     cmd.Connection = _connection;
                     cmd.CommandType = System.Data.CommandType.Text;
-                    cmd.CommandText = $@"SELECT TOP(1) [factoryId],[DutyManager] FROM [erp].[dbo].[LocationData] where DutyStartTime<=@DateTimeParam and DutyEndTime>=@DateTimeParam";
+                    cmd.CommandText = $@"SELECT TOP(1) [factoryId],[DutyManager],[DutyStartTime],[DutyEndTime] FROM [erp].[dbo].[LocationData] where DutyStartTime<=@DateTimeParam and DutyEndTime>=@DateTimeParam";
                     var dataReader = cmd.ExecuteReader();
                     while (dataReader.Read())
                     {
@@ -36,6 +36,7 @@ namespace EdgeService.gRPC.ERP
                         };
                         break;
                     }
+                    dataReader.Close();
                     return locationData;
                 }
                 catch(Exception ex)
