@@ -19,12 +19,14 @@ builder.Services.AddAuthentication(
         options.CacheSize = 1024;
         options.CacheEntryExpiration = TimeSpan.FromMinutes(30); //cache for 30 minutes
     });
-builder.Services.AddSingleton<EdgeGatewayService>();
+builder.Services.AddSingleton<EquipmentService>();
+builder.Services.AddSingleton<FacilityService>();
 // Add services to the container.
 builder.Services.AddGrpc();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
-app.MapGrpcService<EdgeGatewayService>();
+app.MapGrpcService<EquipmentService>();
+app.MapGrpcService<FacilityService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.Run();

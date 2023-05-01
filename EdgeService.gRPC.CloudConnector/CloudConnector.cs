@@ -2,6 +2,8 @@
 using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Net.Client;
+using System.Text.Json;
+using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EdgeService.gRPC.CloudConnector
@@ -12,6 +14,7 @@ namespace EdgeService.gRPC.CloudConnector
         private Grpc.Core.AsyncClientStreamingCall<EquipmentEnrichedMessage, CloudResponse> _clientStreamingCall;
         private Grpc.Core.AsyncDuplexStreamingCall<EquipmentEnrichedMessage, CloudResponse> _biStreamingCall;
         private Task _readResponsesTask;
+        public List<string> logs = new List<string>();
         private string _streamingMode;
         public CloudConnector()
         {
@@ -24,7 +27,8 @@ namespace EdgeService.gRPC.CloudConnector
             // The port number must match the port of the gRPC server.
             var channel = GrpcChannel.ForAddress("https://localhost:5003", new GrpcChannelOptions { HttpClient = httpClient });
             _cloudBrokerClient = new CloudBroker.CloudBrokerClient(channel);
-            _streamingMode = StreamingMode.Unary;
+            //change the default streaming mode
+            _streamingMode = StreamingMode.BiDirectional;
             if (_streamingMode == StreamingMode.ClientStreaming)
             {
                 Create_ClientStreamingCall();
@@ -39,7 +43,12 @@ namespace EdgeService.gRPC.CloudConnector
         {
             try
             {
+                var startTime = DateTime.UtcNow;
                 var reply = await _cloudBrokerClient.SendAsync(request);
+                var receivedTime = DateTime.UtcNow;
+                TimeSpan ts = receivedTime - startTime;
+                string jsonData = JsonSerializer.Serialize(request);
+                logs.Add($"ProtocolBufferSize={request.CalculateSize()},JSONSize={Encoding.UTF8.GetByteCount(jsonData)},RTT={ts.TotalMilliseconds}");
                 return reply;
             }
             catch (Exception ex)
@@ -57,7 +66,10 @@ namespace EdgeService.gRPC.CloudConnector
         {
             try
             {
+                var startTime = DateTime.UtcNow;
                 await _clientStreamingCall.RequestStream.WriteAsync(request);
+                string jsonData = JsonSerializer.Serialize(request);
+                logs.Add($"ProtocolBufferSize={request.CalculateSize()},JSONSize={Encoding.UTF8.GetByteCount(jsonData)},SendTime={startTime},messageId={request.MessageId}");
             }
             catch (Exception ex)
             {
@@ -75,7 +87,10 @@ namespace EdgeService.gRPC.CloudConnector
         {
             try
             {
-                await _cloudBrokerClient.SendAsync(request);
+                var startTime = DateTime.UtcNow;
+                await _biStreamingCall.RequestStream.WriteAsync(request);
+                string jsonData = JsonSerializer.Serialize(request);
+                logs.Add($"ProtocolBufferSize={request.CalculateSize()},JSONSize={Encoding.UTF8.GetByteCount(jsonData)},SendTime={startTime},messageId={request.MessageId}");
             }
             catch (Exception ex)
             {
@@ -97,6 +112,7 @@ namespace EdgeService.gRPC.CloudConnector
         {
             await _clientStreamingCall.RequestStream.CompleteAsync();
             var response = await _clientStreamingCall.ResponseAsync;
+            PerformanceLogger.WriteDataToFile($"clientstream_${DateTime.Now.Ticks.ToString()}.txt",logs);
         }
 
         /// <summary>
@@ -111,7 +127,7 @@ namespace EdgeService.gRPC.CloudConnector
                 await foreach (var responseMessage in _biStreamingCall.ResponseStream.ReadAllAsync())
                 {
                     //get the response for the message
-                    //logs.Add($",,,ReceivedTime={DateTime.UtcNow},messageId={responseMessage.MessageId}");
+                    logs.Add($",,,ReceivedTime={DateTime.UtcNow},messageId={responseMessage.MessageId}");
                 }
             });
         }
@@ -122,6 +138,7 @@ namespace EdgeService.gRPC.CloudConnector
         {
             await _biStreamingCall.RequestStream.CompleteAsync();
             await _readResponsesTask;
+            PerformanceLogger.WriteDataToFile($"bistream_${DateTime.Now.Ticks.ToString()}.txt",logs);
         }
 
 

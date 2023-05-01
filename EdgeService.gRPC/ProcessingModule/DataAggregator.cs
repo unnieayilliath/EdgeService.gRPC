@@ -28,7 +28,6 @@ namespace EdgeService.ProcessingModule
         private static void FindClosestFacilityReading(EquipmentEnrichedMessage newMessage)
         {
             var closestFacilityReading = new FacilityMessage();
-            DateTime closestTimestamp = DateTime.MinValue;
             TimeSpan closestTimeSpan = TimeSpan.MaxValue;
 
             foreach (var facilityReading in facilityDataList)

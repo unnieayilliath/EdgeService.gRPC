@@ -20,6 +20,7 @@ namespace EdgeService.ProcessingModule
         {
             var enrichedData = new EquipmentEnrichedMessage
             {
+                MessageId= message.MessageId,
                 DeviceId = message.DeviceId,
                 EnergyConsumption = message.EnergyConsumption,
                 Payload = message.Payload,

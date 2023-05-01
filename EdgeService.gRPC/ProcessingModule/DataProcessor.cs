@@ -10,7 +10,7 @@ namespace EdgeService.ProcessingModule
 {
     public class DataProcessor:IDisposable
     {
-        private readonly CloudConnector _cloudConnector;
+        public readonly CloudConnector _cloudConnector;
         private readonly DataEnrichment _dataEnrichment;
         private readonly DataAggregator _dataAggregator;
         public DataProcessor()
