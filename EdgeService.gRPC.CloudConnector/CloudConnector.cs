@@ -5,6 +5,7 @@ using Grpc.Net.Client;
 using System.Text.Json;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Extensions.Configuration;
 
 namespace EdgeService.gRPC.CloudConnector
 {
@@ -16,19 +17,28 @@ namespace EdgeService.gRPC.CloudConnector
         private Task _readResponsesTask;
         public List<string> logs = new List<string>();
         private string _streamingMode;
-        public CloudConnector()
+        public CloudConnector(IConfiguration configuration)
         {
+            var certificateHelper = new CertificateHelper(configuration);
             // create a httpHandler
             var httpHandler = new HttpClientHandler();
-            //ignore certificate validations
-            httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            //add the certificate for authentication
+            httpHandler.ClientCertificates.Add(certificateHelper.
+                                                getAuthenticationCertificate());
 
             var httpClient = new HttpClient(httpHandler);
+            var cloudBrokerConfig = configuration.GetSection("cloudbroker");
+            if (cloudBrokerConfig == null)
+            {
+                throw new Exception(@"Cloud  server details not 
+                            configured in app settings file");
+            }
+            var cloudServer = cloudBrokerConfig.GetSection("server").Value;
             // The port number must match the port of the gRPC server.
-            var channel = GrpcChannel.ForAddress("https://localhost:5003", new GrpcChannelOptions { HttpClient = httpClient });
+            var channel = GrpcChannel.ForAddress(cloudServer, new GrpcChannelOptions { HttpClient = httpClient });
             _cloudBrokerClient = new CloudBroker.CloudBrokerClient(channel);
-            //change the default streaming mode
-            _streamingMode = StreamingMode.BiDirectional;
+            //set the streaming mode
+            _streamingMode = cloudBrokerConfig.GetSection("mode").Value;
             if (_streamingMode == StreamingMode.ClientStreaming)
             {
                 Create_ClientStreamingCall();

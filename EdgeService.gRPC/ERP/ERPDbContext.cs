@@ -9,7 +9,7 @@ namespace EdgeService.gRPC.ERP
         private SqlConnection _connection;
         public ERPDbContext()
         {
-            _connection = new SqlConnection(@"Server=(localdb)\MSSQLLocalDB;Database=ERP;Trusted_Connection=True;");
+            _connection = new SqlConnection(@"Server=vm-edge\SQLEXPRESS01;Database=ERP;Trusted_Connection=True;TrustServerCertificate=True");
             _connection.Open();
         }
         public LocationData GetCurrentLocationData(DateTime readingTime)

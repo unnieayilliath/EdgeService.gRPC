@@ -8,14 +8,18 @@ using System.Threading.Tasks;
 
 namespace EdgeService.ProcessingModule
 {
-    public class DataProcessor:IDisposable
+    public class DataProcessor : IDisposable
     {
         public readonly CloudConnector _cloudConnector;
         private readonly DataEnrichment _dataEnrichment;
         private readonly DataAggregator _dataAggregator;
         public DataProcessor()
         {
-            _cloudConnector = new CloudConnector();
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+               .AddJsonFile("appsettings.json");
+            var configuration = builder.Build();
+            _cloudConnector = new CloudConnector(configuration);
             _dataEnrichment = new DataEnrichment();
             _dataAggregator = new DataAggregator();
         }
