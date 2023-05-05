@@ -1,0 +1,33 @@
+syntax = "proto3";
+option csharp_namespace = "CommonModule.Protos";
+import "google/protobuf/timestamp.proto";
+package cloud;
+service CloudBroker {
+	//unary
+  rpc Send (EquipmentEnrichedMessage) returns (CloudResponse);
+  // Client streaming
+  rpc SendStream (stream EquipmentEnrichedMessage) returns (CloudResponse);
+  // bi directional streaming
+  rpc SendBiDirectionalStream(stream EquipmentEnrichedMessage) returns (stream CloudResponse);
+}
+message EquipmentEnrichedMessage {
+	//base fields
+  string messageId=1;
+  string deviceId=2;
+  string status=3;
+  google.protobuf.Timestamp timestamp=4;
+  float temperature=5;
+  float energyConsumption=6;
+  int32  productionRate=7;
+  string payload=8;
+  //enriched fields
+  string factoryId=9;
+  string dutymanager=10;
+  float roomTemperature=11;
+  float roomHumidity=12;
+}
+
+message CloudResponse {
+  string messageId=1;
+  google.protobuf.Timestamp _receivedTime=2;
+}
