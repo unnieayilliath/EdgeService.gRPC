@@ -12,7 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdgeService.UnitTests", "EdgeService.UnitTests\EdgeService.UnitTests.csproj", "{80AA9270-51D9-4777-8D16-90A1AC8D1FCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdgeService.UnitTests", "EdgeService.UnitTests\EdgeService.UnitTests.csproj", "{80AA9270-51D9-4777-8D16-90A1AC8D1FCB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonModule.Protos", "..\CommonModule.Protos\CommonModule.Protos.csproj", "{7EE37AE1-23CE-4289-B7E3-62C80F89379D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{80AA9270-51D9-4777-8D16-90A1AC8D1FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80AA9270-51D9-4777-8D16-90A1AC8D1FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80AA9270-51D9-4777-8D16-90A1AC8D1FCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE37AE1-23CE-4289-B7E3-62C80F89379D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE37AE1-23CE-4289-B7E3-62C80F89379D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE37AE1-23CE-4289-B7E3-62C80F89379D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE37AE1-23CE-4289-B7E3-62C80F89379D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
