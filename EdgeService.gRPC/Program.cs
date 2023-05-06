@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
+var protocol = builder.Configuration.GetSection("Protocol").Value;
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
     options.ListenAnyIP(5001, listenOptions =>
     {
-        listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
+        listenOptions.Protocols = protocol=="h3"?HttpProtocols.Http1AndHttp2AndHttp3:HttpProtocols.Http1AndHttp2;
         listenOptions.UseHttps();
     });
 });

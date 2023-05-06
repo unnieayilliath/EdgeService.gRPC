@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="..\..\CommonModule.Protos\edge.proto" GrpcServices="Server" />
+		<Protobuf Include=".\Protos\edge.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 	<ItemGroup>
