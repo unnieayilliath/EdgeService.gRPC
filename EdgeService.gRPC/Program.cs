@@ -12,12 +12,11 @@ builder.WebHost.ConfigureKestrel((context, options) =>
         listenOptions.UseHttps();
     });
 });
-builder.Services.AddAuthentication(
-        CertificateAuthenticationDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
     .AddCertificate()
     .AddCertificateCache(options =>
     {
-        options.CacheSize = 1024;
+        options.CacheSize = 2048;
         options.CacheEntryExpiration = TimeSpan.FromMinutes(30); //cache for 30 minutes
     });
 builder.Services.AddSingleton<EquipmentService>();
