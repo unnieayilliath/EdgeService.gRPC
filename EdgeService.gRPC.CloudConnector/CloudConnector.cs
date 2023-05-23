@@ -25,7 +25,7 @@ namespace EdgeService.gRPC.CloudConnector
             //add the certificate for authentication
             httpHandler.ClientCertificates.Add(certificateHelper.
                                                 getAuthenticationCertificate());
-
+            httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             var httpClient = new HttpClient(httpHandler);
             var cloudBrokerConfig = configuration.GetSection("cloudbroker");
             if (cloudBrokerConfig == null)

@@ -19,7 +19,7 @@ namespace EdgeService.gRPC.Services
         public EquipmentService(ILogger<EquipmentService> logger)
         {
             _logger = logger;
-            //_dataProcessor = new DataProcessor();
+            _dataProcessor = new DataProcessor();
             _runningTasks = new List<Task>();
         }
         /// <summary>
@@ -32,7 +32,7 @@ namespace EdgeService.gRPC.Services
         {
             _logger.LogInformation("Received equipment request!");
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
-           // _dataProcessor.Run(request);
+            _dataProcessor.Run(request);
             return new EdgeResponse
             {
                 ReceivedTime = receivedTime
@@ -50,12 +50,12 @@ namespace EdgeService.gRPC.Services
             {
                 var currentMessage = requestStream.Current;
                 // Process the current message.
-               // _runningTasks.Add(_dataProcessor.Run(currentMessage));
+                _runningTasks.Add(_dataProcessor.Run(currentMessage));
             }
             Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
             WaitForAllRunningTasksTocomplete();
             //client has closed stream, so close the cloud connector stream as well.
-            //_dataProcessor._cloudConnector.Complete_ClientStreamingCallAsync();
+            _dataProcessor._cloudConnector.Complete_ClientStreamingCallAsync();
             return new EdgeResponse
             {
                 ReceivedTime = receivedTime
@@ -88,7 +88,7 @@ namespace EdgeService.gRPC.Services
                     Timestamp receivedTime = DateTime.UtcNow.ToTimestamp();
                     var requestMessage = requestStream.Current;
                     // Process the current message.
-                   // _runningTasks.Add(_dataProcessor.Run(requestMessage));
+                   _runningTasks.Add(_dataProcessor.Run(requestMessage));
                     var response = new EdgeResponse
                     {
                         MessageId = requestMessage.MessageId,
@@ -98,13 +98,13 @@ namespace EdgeService.gRPC.Services
                 }
                 WaitForAllRunningTasksTocomplete();
                 //client has closed stream, so close the cloud connector stream as well.
-                //await _dataProcessor._cloudConnector.Complete_BiStreamingCallAsync();
+                await _dataProcessor._cloudConnector.Complete_BiStreamingCallAsync();
             }
             catch (Exception Ex)
             {
                 WaitForAllRunningTasksTocomplete();
                 //client has closed stream, so close the cloud connector stream as well.
-               // await _dataProcessor._cloudConnector.Complete_BiStreamingCallAsync();
+                await _dataProcessor._cloudConnector.Complete_BiStreamingCallAsync();
             }
         }
     }
